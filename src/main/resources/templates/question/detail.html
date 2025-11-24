@@ -16,8 +16,9 @@
                     <div th:text="${#temporals.format(question.created, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+            <!-- 질문 수정 / 삭제 /question/modify/1 -->
             <div class="my-3">
-                <a href="#"
+                <a th:href="@{|/question/modify/${question.id}|}"
                    class="btn btn-sm btn-outline-primary"
                    sec:authorize="isAuthenticated()"
                    th:if="${question.author != null and
@@ -26,8 +27,9 @@
                 >
                 수정
                 </a>
-                <a href="#"
-                   class="btn btn-sm btn-outline-danger"
+                <a href="javascript:void(0)"
+                   th:data-uri="@{|/question/delete/${question.id}|}"
+                   class="delete btn btn-sm btn-outline-danger"
                    sec:authorize="isAuthenticated()"
                    th:if="${question.author != null and
                             #authentication.getPrincipal().getUsername() == question.author.username}"
@@ -49,6 +51,26 @@
                     <div th:text="${#temporals.format(answer.created, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
+            <div class="my-3">
+                <a th:href="@{|/answer/modify/${answer.id}|}"
+                   class="btn btn-sm btn-outline-primary"
+                   sec:authorize="isAuthenticated()"
+                   th:if="${answer.author != null and
+                            #authentication.getPrincipal().getUsername() == answer.author.username}"
+                   th:text="수정"
+                >
+                    수정
+                </a>
+                <a href="javascript:void(0)"
+                   th:data-uri="@{|/answer/delete/${answer.id}|}"
+                   class="delete btn btn-sm btn-outline-danger"
+                   sec:authorize="isAuthenticated()"
+                   th:if="${answer.author != null and
+                            #authentication.getPrincipal().getUsername() == answer.author.username}"
+                   th:text="삭제"
+                >삭제
+                </a>
+            </div>
         </div>
     </div>
 
@@ -67,5 +89,18 @@
         <input class="btn btn-primary my-2" type="submit" value="답변 등록">
     </form>
 </div>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(() => {
+            $('.delete').click(function() {
+                if(confirm("정말 삭제할까요?")) {
+                    const uri = $(this).data('uri')
+                    window.location.href = uri;
+                }
+            })
+        })
+    </script>
+</th:block>
 
 </html>
